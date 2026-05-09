@@ -228,11 +228,33 @@ DB 트랜잭션 안에 "outbox 테이블" 에 이벤트를 같이 INSERT.
 ```sql
 BEGIN;
 UPDATE orders SET status='PAID' WHERE id=1;
-INSERT INTO outbox(topic, payload) VALUES ('OrderPaid', '{"id":1}');
+INSERT INTO outbox(
+  id,                  -- UUID, idempotency 키
+  aggregate_id,        -- order_id 등 — 같은 aggregate 의 순서 보장에 사용
+  aggregate_type,      -- 'Order' / 'Payment' / 'Refund' …
+  topic,
+  partition_key,       -- Kafka partition 라우팅 (보통 aggregate_id)
+  payload,             -- JSON
+  trace_id,            -- 분산 추적 — 컨슈머까지 전파
+  created_at
+) VALUES (...);
 COMMIT;
 ```
 
-→ outbox poller 가 발행 후 삭제 (또는 published_at 표시).
+→ outbox poller 또는 **Debezium-CDC 기반 outbox** 가 발행 (poller 부담 vs CDC 운영 부담 트레이드오프).
+발행 후 삭제 또는 `published_at` 표시.
+
+#### 보상의 보상 — Saga 가 깨질 때
+
+Saga 보상(예: 결제 환불) 자체가 실패하면 어떻게 되는가? 3계층 처리가 필요:
+
+| 계층 | 처리 |
+|------|------|
+| 1. **DLQ (Dead Letter Queue)** | 보상 실패 메시지 격리 + 알람 |
+| 2. **수동 reconciliation** | 운영팀이 콘솔로 강제 환불 / 재고 회복 (감사 로그 필수) |
+| 3. **일 단위 reconciler** | 야간 배치로 "주문 vs PG 결제 vs 재고" 3자 정합 검증 → 어긋난 건 알람·티켓 |
+
+**RPO 1분** ([케이스 6](../case-study/README.md#6-운영-sla)) 의 결제 도메인은 위 3계층 모두 운영 필수.
 
 ### 4.3 멱등성 (Idempotency)
 
@@ -240,7 +262,10 @@ COMMIT;
 
 - 결제 요청에 `idempotency_key` 헤더 (UUID, Universally Unique Identifier)
 - 같은 키로 반복 호출 → 첫 결과 그대로 반환
-- TTL(Time To Live) 24시간 정도
+- TTL(Time To Live) — 도메인별 차등:
+  - 일반 API: 24시간
+  - **결제 / 환불: 분쟁 윈도우 (90일+) 까지 보존** — 사용자 분쟁 / 카드사 chargeback 시점까지
+  - 알림 / 푸시: 1시간
 - 결제뿐 아니라 outbox 컨슈머·웹훅 수신·재고 예약 등 외부와 닿는 모든 경로에 같은 패턴 적용
 
 ### 트레이드오프 — Saga vs 분산 트랜잭션 (2PC)
@@ -338,9 +363,11 @@ COMMIT;
 |------|----------|------|
 | Session Cookie | 서버 세션 | 유효성 즉시 무효화 가능, 분산 환경엔 sticky 또는 공유 세션 |
 | JWT (JSON Web Token, Access) | 클라이언트 | 무상태 · 확장 쉬움. 무효화 어려움 |
-| Refresh Token | 서버 보관 | 짧은 access + 긴 refresh + rotate |
+| Refresh Token | 서버 보관 | 짧은 access + 긴 refresh + rotate + **reuse detection** |
 
 원픽: [케이스 11.2.5](../case-study/README.md#1125-인증--토큰) 에 따라 모바일은 Access(15분) + Refresh(30일, rotate). 웹은 HttpOnly Cookie 세션 + CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조) 토큰.
+
+**Refresh token reuse detection** (탈취 회복 — 6장 3.3 참조): 같은 refresh token 이 두 번 사용되면 family 전체 무효화. 탈취자가 한 번이라도 사용하면 정상 사용자도 강제 재로그인되지만 탈취 chain 은 끊긴다. 30일 rotate 의 핵심 안전선.
 
 ### 7.3 인가
 
@@ -394,11 +421,18 @@ graph TB
 | 도메인 | DB | 비고 |
 |--------|----|----|
 | 회원 · 주문 · 결제 · 프로모션 · 리뷰 · 정책 | Aurora MySQL (Writer 1, Reader 3) | 모놀리스 공유. PII(Personally Identifiable Information, 개인 식별 정보) 컬럼은 분리 스키마 + 마스킹 ([6장](../06-보안과-컴플라이언스/) 참조) |
-| 셀러 정산 | Aurora PostgreSQL (별도) | 트랜잭션 분리 |
+| 셀러 정산 | Aurora PostgreSQL (별도) | 트랜잭션 분리 + RLS 적용 |
 | 상품 (Catalog) | MongoDB (옵션 변동 큼) + Redis 캐시 | 검색은 OpenSearch 인덱스로 |
 | 검색 | OpenSearch | 카탈로그에서 CDC(Change Data Capture, 변경 데이터 캡처) 로 색인 |
 | 추천 | Feature Store (Redis + Parquet) | ML 별도 (5장) |
 | 라이브 메타 | DynamoDB | TTL 짧음 |
+
+> **DB 6종 운영 비용 — 트레이드오프**: 케이스 220명 조직에서 6종 DB 운영은 **잠재적 안티패턴**. 각 DB 마다 백업 / 모니터링 / 튜닝 / 장애 대응 인력이 0.5~1명씩 누적된다. 도메인별 격리의 가치 vs 운영 비용을 분기 단위로 재평가:
+> - Aurora MySQL + PostgreSQL **둘 다 필요한가** — 정산 PG 의 RLS / JSONB 가 결정적이지 않으면 MySQL 로 통합 검토
+> - Feature Store 의 Redis vs DynamoDB 의 라이브 메타 — TTL 짧은 워크로드끼리 통합 가능성
+> - MongoDB → 상품 도메인이 정형화되면 Aurora MySQL 의 JSON 컬럼으로 통합 가능
+>
+> 단순화 결정은 [7장 7.2 비용 리뷰](../07-운영과-조직/) 의 분기 워크숍 의제.
 
 ### 8.3 메시징 ([케이스 11.2.4](../case-study/README.md#1124-메시징) 인용)
 
@@ -452,6 +486,41 @@ sequenceDiagram
 | Payment 성공 후 Order COMMIT 실패 (네트워크) | 결제 환불 트리거 (보상) |
 | outbox 발행 실패 | poller 재시도 (DB 에 남아있음) |
 | 컨슈머 처리 실패 | DLQ 로 이동 + 알람 |
+
+## 8.6 백엔드 관측성 — Saga / Outbox / 결제의 운영 시야
+
+분산 흐름은 운영 시 **trace · metric · log 3종 모두** 가 도메인 모델과 1:1 매핑되어야 한다. 그렇지 않으면 사고 시 MTTR 이 폭발한다.
+
+### Trace — 분산 추적 (OpenTelemetry)
+
+- 모든 외부 진입에서 `trace_id` 생성 (BFF / webhook / Kafka 컨슈머)
+- Saga 단계별 span (`OrderCreated.reserveInventory`, `OrderCreated.charge`, `OrderCreated.persistOrderPaid`)
+- Outbox 발행 / 컨슈머 처리에 `trace_id` 전파 (헤더 또는 payload 메타)
+- Pay → PG → Pay webhook 까지 한 trace 로 묶이도록 PG 호출에 `idempotency_key` + `trace_id` 헤더
+
+### Metric — Saga / Outbox 핵심 지표
+
+| 메트릭 | 의미 | 알람 임계 |
+|--------|------|----------|
+| `outbox_lag_seconds` | outbox INSERT → 발행까지 지연 | p99 > 5s |
+| `saga_duration_seconds{step}` | 단계별 지연 | p95 > 2s (결제) |
+| `saga_compensation_total{reason}` | 보상 발생 빈도·사유별 | 일 평균 + 3σ 초과 |
+| `idempotency_dedup_total` | 중복 webhook 차단 횟수 | 정상 — 기준선 모니터링 |
+| `dlq_size` | DLQ 적체 | > 0 즉시 (자동 ticket) |
+| `reconciler_mismatch_total` | 일 단위 정합 검증 불일치 | > 0 즉시 |
+
+### Log — 도메인 키 grep 가능
+
+- 모든 로그에 `order_id` / `payment_id` / `seller_id` 컬럼 강제
+- 일 단위 reconciler 결과는 별도 테이블 + Slack 채널
+- PII 절대 로그에 출력 금지 (감사용은 별도 [6장 2.4](../06-보안과-컴플라이언스/))
+
+### 함정
+
+> - **Saga span 누락** → "결제는 됐는데 주문이 안 됐다" 류 장애에서 어느 단계에서 끊겼는지 추적 불가
+> - **outbox_lag 미측정** → poller 죽음을 30분 후 알아챔
+> - **trace_id 단절** (BFF → 모놀리스 → PG webhook) → 사용자 문의 시점부터 역추적 불가능
+> - **PII 로그 출력** → ISMS-P 감사 시점에 통째로 사고
 
 ## 9. 정리 — 체크리스트
 

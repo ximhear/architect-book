@@ -388,7 +388,7 @@ op service create order-history --lang kotlin --runtime k8s
 ### 10.5 비용
 
 - 도메인팀별 월 비용 대시보드 (Grafana)
-- 분기 비용 리뷰 — 매출 대비 IT 비용 비율 6~8% 유지가 목표 ([케이스 2.3](../case-study/README.md#23-매출비용-가이드라인))
+- 분기 비용 리뷰 — 매출 대비 IT 비용 비율 10~14% 유지가 목표 ([케이스 2.3](../case-study/README.md#23-매출비용-가이드라인) — 멀티 클라우드 + AI 활용 가정)
 - 절감 KPI — 도메인 리드 평가 일부에 포함
 
 ### 트레이드오프 — 원픽의 운영 / 조직 결정

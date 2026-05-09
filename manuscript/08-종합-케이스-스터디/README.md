@@ -110,6 +110,10 @@ graph TB
         DBT[dbt]
     end
 
+    subgraph 관측성
+        GC[Grafana Cloud<br/>메트릭+로그+트레이스]
+    end
+
     APP_iOS --> CDN
     APP_AOS --> CDN
     WEB --> CDN
@@ -175,6 +179,8 @@ graph TB
 
 ### 4.1 상품 구매 흐름 (피크 시간)
 
+> 이 시퀀스는 **[케이스 12.1](../case-study/README.md#121-1년-분기별) Q2 이후** — 결제 서비스가 모놀리스에서 분리된 구조 기준이다. Q1 시점에는 `Pay` 가 모놀리스 내부 모듈이며 `Order → Pay` 호출이 같은 프로세스 내 메서드 호출로 이뤄진다.
+
 ```mermaid
 sequenceDiagram
     participant U as 사용자
@@ -186,7 +192,7 @@ sequenceDiagram
     participant Search
     participant Mono as 모놀리스
     participant Inv as 재고 (Aurora)
-    participant Pay as 결제 (Aurora)
+    participant Pay as 결제 (Q2+ 별도 서비스)
     participant PG as PG 3사
     participant K as Kafka
 

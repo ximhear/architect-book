@@ -79,11 +79,14 @@
 |------|------|------|
 | 메인 (오늘의 추천) | SSR + 캐시 5초 | 개인화, 신선도 |
 | 카테고리 | ISR (5분) | 자주 바뀌지 않음, SEO |
-| 상품 상세 | ISR + on-demand revalidate | 가격 / 재고 변경 시 즉시 갱신 |
+| 상품 상세 — **Top 인기 N개** | ISR + on-demand revalidate | 가격 / 재고 변경 시 즉시 갱신 |
+| 상품 상세 — **나머지 (lazy build)** | SSR + SWR 캐시 (60s) | 800만 SKU 전부 ISR 빌드 비현실적 |
 | 검색 결과 | SSR | SEO, 쿼리별 동적 |
 | 장바구니 | CSR | 로그인 후, SEO 무관 |
 | 주문 / 결제 | CSR + 서버 액션 | 폼 · webview 호출 |
 | 셀러 어드민 | CSR | 내부 도구, SEO 무관 |
+
+> **800만 SKU ISR 비용 — 함정**: Vercel 같은 매니지드 ISR 은 약 150만 path 부근에서 빌드 / cache invalidation 비용이 폭증한다. 800만 전체 ISR 은 비현실적. **2단계 전략** — 인기 Top N (예: 30만) 만 ISR, 나머지는 SSR + SWR (Stale-While-Revalidate, 클라이언트 캐시 갱신) 조합. 인기 갱신은 일 단위 배치.
 
 ### 2.3 Next.js (App Router) 가정
 
@@ -271,7 +274,7 @@ sequenceDiagram
 - 키보드 네비게이션 (Tab / Enter / Esc) 모든 인터랙션
 - ARIA (Accessible Rich Internet Applications) 라벨 / 스크린리더 (NVDA / VoiceOver) 테스트
 - 색상 대비 4.5:1 (정상 텍스트), 3:1 (큰 텍스트)
-- **국내 법규**: 「장애인차별금지법」 시행령 — 일정 규모 이상 사이트는 의무 — **확인 필요**
+- **국내 법규**: 「장애인차별금지법」 시행령 — 종합 커머스는 단계적 적용 완료로 **의무 대상**. 미준수 시 차별 시정 명령 가능
 
 ### 7.2 국제화 (i18n, internationalization)
 
@@ -294,7 +297,7 @@ sequenceDiagram
 | 지표 | 좋음 | 의미 |
 |------|------|------|
 | LCP (Largest Contentful Paint, 최대 콘텐츠풀 페인트) | < 2.5s | 가장 큰 콘텐츠가 보일 때까지 |
-| FID / INP (Interaction to Next Paint, 다음 페인트까지의 상호작용) | < 200ms | 인터랙션 응답 |
+| INP (Interaction to Next Paint, 다음 페인트까지의 상호작용) | < 200ms | 인터랙션 응답. 2024년 FID 를 공식 대체 |
 | CLS (Cumulative Layout Shift, 누적 레이아웃 이동) | < 0.1 | 레이아웃 흔들림 |
 
 ### 8.2 한국 환경에서의 최적화
@@ -360,7 +363,7 @@ graph TB
 라이브 화면은 일반 화면과 다음이 다르다:
 
 - **HLS (HTTP Live Streaming) / LL-HLS (Low-Latency HLS) / WebRTC (Web Real-Time Communication)** — 지연 vs 안정성
-- **채팅** — WebSocket. 시청자 1만+ 부터는 채팅 fanout proxy (다수 구독자에 메시지를 분배하는 중계 서버) 필요
+- **채팅** — WebSocket. 단일 노드는 보통 시청자 약 5천 전후에서 GC (Garbage Collection, 가비지 컬렉션) / FD (File Descriptor, 파일 디스크립터) 한계 도달. **시청자 5천+ 부터 채팅 fanout proxy** (다수 구독자에 메시지를 분배하는 중계 서버) 필요. 라이브 인기 방송(시청자 5만+) 은 fanout 노드 자체를 다중화
 - **좋아요 · 구매 인터랙션** — 클라이언트가 일정 시간 일괄 batch 후 서버 전송 (초당 N회 호출 폭증 방지)
 - **멀티 스트림 동시** — 네트워크 / 배터리 영향 큼
 

@@ -93,11 +93,11 @@
 
 ### 2.3 쿠버네티스 위에 무엇을 얹을까
 
-| 영역 | 일반적 선택 | 원픽 선택 | 이유 |
+| 영역 | 일반적 선택 | 원픽 선택 ([케이스 11.1](../case-study/README.md#111-인프라--클라우드-2장)) | 이유 |
 |------|------------|----------|------|
 | 패키징 | Helm vs Kustomize | Helm | 공식 차트 풍부 |
 | GitOps | ArgoCD vs Flux | ArgoCD | UI 강점 · 운영팀 친화 |
-| 서비스 메시 | Istio vs Linkerd vs (없음) | Linkerd | 단순성 · 낮은 오버헤드 |
+| 서비스 메시 | Istio vs Linkerd vs (없음) | **없음 (k8s 기본 networking 만)** | 한국 인력 풀이 작음, 추가 운영 부담 회피. 향후 Istio 검토 |
 | Ingress | Nginx vs ALB(Application Load Balancer) vs Traefik | ALB Ingress | AWS 통합 |
 | 스토리지 | EBS(Elastic Block Storage, 블록 스토리지) / EFS(Elastic File System, 파일 시스템) / Object | EBS+EFS+S3 | 워크로드별 분리 |
 | 시크릿 | k8s Secret + KMS / Vault | AWS Secrets Manager + External Secrets | 운영 단순 |
@@ -217,9 +217,7 @@ graph LR
 
 | 영역 | 오픈소스 조합 | 매니지드 | 원픽 선택 ([케이스 11.1](../case-study/README.md#111-인프라--클라우드-2장)) |
 |------|------------|---------|----------|
-| Metrics | Prometheus + Grafana | Datadog, Grafana Cloud | Prometheus + Grafana Cloud |
-| Logs | Loki / ELK | Datadog Log, CloudWatch | Loki + S3 archive |
-| Traces | Jaeger / Tempo | Datadog APM (Application Performance Monitoring) | Tempo + Grafana |
+| Metrics + Logs + Traces (통합) | Prometheus + Loki + Tempo (self-host) | **Grafana Cloud (통합 매니지드)**, Datadog | **Grafana Cloud — 메트릭·로그·트레이스 통합** (self-host 부담 회피, SRE 8명 기준) |
 | 표준 | OpenTelemetry (OTel) | (대부분 OTel 호환) | OTel SDK 강제 |
 
 ### 5.3 SLO 부터 시작하기
@@ -344,9 +342,7 @@ graph TB
     end
 
     subgraph 관측성
-        Grafana[Grafana Cloud]
-        Loki[Loki + S3]
-        Tempo[Tempo]
+        Grafana[Grafana Cloud<br/>통합 매니지드<br/>메트릭+로그+트레이스]
     end
 
     subgraph 자동화
@@ -367,8 +363,6 @@ graph TB
     RDS -.이중화.-> NCP_DR
     EKS -.결제 라우팅.-> NCP_PAY
     EKS -.OTel.-> Grafana
-    EKS -.OTel.-> Loki
-    EKS -.OTel.-> Tempo
     TF -.프로비전.-> EKS
     TF -.프로비전.-> RDS
     GHA --> Argo

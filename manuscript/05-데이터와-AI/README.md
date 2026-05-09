@@ -41,13 +41,12 @@ graph LR
         Events[Kafka]
     end
     subgraph 저장
-        S3[(S3 Data Lake)]
-        DW[(BigQuery / Snowflake)]
+        S3[(S3 + Iceberg)]
+        DW[(BigQuery)]
     end
     subgraph 처리
-        Spark[Spark / EMR]
-        DBT[dbt]
-        Stream[Flink / Kafka Streams]
+        DBT[dbt + Airflow]
+        Stream[Flink]
     end
     subgraph 활용
         BI[BI / Looker]
@@ -59,11 +58,11 @@ graph LR
     Mongo --> CDC --> S3
     Logs --> Events --> S3
     Events --> Stream --> ML
-    S3 --> Spark --> DW
+    S3 --> DW
     DW --> DBT --> DW
     DW --> BI
     DW --> ML
-    S3 --> OS
+    Events -.색인 워커.-> OS
 ```
 
 용어:
@@ -196,12 +195,36 @@ graph TB
 | **Typesense / Meilisearch** | 가벼움, 빠름 | 대규모 운영 사례 적음 |
 | **DB native (PG full-text)** | 운영 편함 | 한국어 형태소 · 고급 기능 한계 |
 
-### 4.2 한국어 검색의 함정
+### 4.2 한국어 검색의 함정 — 본 책의 차별화 영역
 
-- **형태소 분석**: 영문은 공백 split 으로 충분, 한국어는 형태소 분석기(은전한닢 / Nori / Khaiii) 필수
-- **이형어 처리**: "삼성" / "samsung" / "Samsung" 동등 취급
-- **오타 / 자모**: "샴성", "ㅅㅏ삼성" 같은 입력. 한글 자모 분해 + edit distance (편집 거리)
-- **숫자 / 단위**: "1.5L 우유" → ["1.5L", "우유"], "1L 우유" 도 매치되어야 하는가?
+#### 형태소 분석
+
+- 영문은 공백 split 으로 충분, 한국어는 형태소 분석기(은전한닢 / **Nori** / Khaiii) 필수
+- **사용자 사전 운영의 현실**: 트렌드 키워드(신조어·브랜드명) 는 일 단위 갱신 필요. 단 OpenSearch 의 `nori_user_dict` 는 인덱스 재시작이 필요 (hot-reload 미지원). 운영 패턴:
+  - 사용자 사전을 별도 인덱스에 저장 → 일 단위 신규 인덱스 빌드 + alias 스왑
+  - 또는 분석 시점이 아닌 색인 시점 시노님 / 검색 시점 시노님 적용으로 우회
+- **AWS Managed OpenSearch 의 Nori** 는 플러그인 사전 등록 / 갱신이 콘솔 작업 — 자동화 어려움. 자체 운영 OpenSearch 의 트레이드오프
+
+#### 이형어 처리
+
+- "삼성" / "samsung" / "Samsung" 동등 취급 — 시노님 사전
+- 외래어 통일 ("아이폰" / "iPhone" / "iphone") — 색인 시점 정규화
+
+#### 오타 / 자모
+
+- "샴성", "ㅅㅏ삼성", "삼ㅅㅓㅇ" 같은 입력. 한글 자모 분해 + edit distance (편집 거리)
+- 자동완성과의 결합 — 자모 단위 prefix 인덱스 (트라이 또는 n-gram)
+
+#### 숫자 / 단위
+
+- "1.5L 우유" → `["1.5L", "우유"]`. "1L 우유" 도 매치되어야 하는가? (도메인 결정)
+- 단위 정규화 (kg / g / 그램 / 천 / 만 등)
+
+#### 한국어 검색 운영의 흔한 사고
+
+> - **사용자 사전 갱신 누락** — 신조어 검색이 한 달째 0건이지만 운영팀은 모름 → 사전 갱신 KPI 필요
+> - **Nori 버전 업그레이드 시 분석 결과 변동** — 같은 쿼리가 다르게 분석될 수 있음 → reindex 필수
+> - **자모 분해의 false positive** — "ㄱ" 검색이 모든 ㄱ 시작 단어 매치 → 임계 길이 (2자모 이상)
 
 ### 4.3 색인 전략
 
@@ -250,7 +273,7 @@ graph LR
 | 3단계 | Sequence model (RNN / Transformer) | 실시간 행동 반영 |
 | 4단계 | Two-tower (양방향 인코더) / Multi-task | 후보 생성 + 랭킹 분리 |
 
-원픽은 2~3단계 중간 ([케이스 11.4.2](../case-study/README.md#1142-검색추천)). 4단계는 라이브 시청 데이터 누적 후 검토 (이 절의 논의를 위한 가정).
+원픽은 4단계 (Two-tower) 운영 중 ([케이스 11.4.2](../case-study/README.md#1142-검색추천)). 1~3단계는 발전 경로 참조용으로 본문에 둠.
 
 ### 5.2 Feature Store (학습-서빙 일관성을 보장하는 피처 저장소)
 
