@@ -7,7 +7,7 @@
 - 한국 법규(개인정보보호법 · 정보통신망법 · 전자금융감독규정 등) 의 핵심을 어디서 챙겨야 하는가?
 - 정보보호 관리체계(ISMS / ISMS-P) 와 망분리, 우리 서비스에 적용되는가?
 - 결제 · 본인인증 · 간편로그인의 보안 설계는?
-- OWASP Top 10 을 실서비스에 어떻게 강제하는가?
+- OWASP (Open Web Application Security Project) Top 10 을 실서비스에 어떻게 강제하는가?
 - 어뷰징 · 사기 탐지(Trust & Safety, 신뢰·안전) 는 어떻게 시작하는가?
 
 > ⚠️ **법규 인용 시점 면책**: 본 장의 모든 법규 인용은 **2026년 상반기 기준** 의 일반론이다.
@@ -18,7 +18,7 @@
 보안은 사고가 나기 전엔 비용으로 보이고, 사고가 나면 회사를 흔든다.
 한국 시장에서는 추가로 **법규 위반 자체가 직접적 페널티** 가 된다 — 과징금 · 서비스 정지 명령 · 형사 책임.
 
-이 장은 글로벌 보안의 표준(OWASP · CIS · NIST) 위에 한국 법규의 추가 요구를 얹는다.
+이 장은 글로벌 보안의 표준(OWASP · CIS — Center for Internet Security · NIST — National Institute of Standards and Technology) 위에 한국 법규의 추가 요구를 얹는다.
 
 ## 1. 한국 법규의 지형도
 
@@ -119,7 +119,7 @@
 
 | 값 | 정식 명칭 | 용도 | 특성 |
 |----|----------|------|------|
-| **CI** (Connecting Information) | 연계정보 | **기관 간** 같은 사람 식별 | 본인 동일성 (예: A 사이트와 B 사이트 가입 시 동일인 확인) — 88바이트 해시 |
+| **CI** (Connecting Information) | 연계정보 | **기관 간** 같은 사람 식별 | 본인 동일성 (예: A 사이트와 B 사이트 가입 시 동일인 확인) — 보통 Base64 88자리 정도 (본인확인기관 표준에 따라 변동 가능) |
 | **DI** (Duplication Information) | 중복가입확인정보 | **단일 사이트 내** 중복 가입 방지 | 사이트별 다름 — 같은 사람이라도 사이트마다 값이 다름 |
 
 원픽 같은 일반 커머스는 보통 **DI 만 저장** (중복 가입 방지). CI 는 본인인증 직후 사용 후 폐기 권장 — 저장 시 정보주체 동의 + 분리 저장 필수.
@@ -271,11 +271,11 @@ ISMS-P / 금융 환경에서 자주 등장하는 망분리는 **세 종류 망�
 
 | 망 | 의미 | 일반적 통제 |
 |----|------|-----------|
-| **인터넷망** | 일반 사용자 / 외부 트래픽 | WAF / Bot 방어 / DDoS |
-| **업무망** | 직원 PC / 사내 시스템 (이메일·인사·재무) | VPN / EDR / DLP (데이터 유출 방지) |
+| **인터넷망** | 일반 사용자 / 외부 트래픽 | WAF / Bot 방어 / DDoS (Distributed Denial of Service, 분산 서비스 거부) 방어 |
+| **업무망** | 직원 PC / 사내 시스템 (이메일·인사·재무) | VPN / EDR (Endpoint Detection and Response, 엔드포인트 탐지·대응) / DLP (데이터 유출 방지) |
 | **DB망 (운영망)** | 운영 DB · 결제 시스템 | 점프 호스트 / MFA / 작업 녹화 |
 
-이상적으로는 세 망 사이에 직접 트래픽 금지. 클라우드에서는 VPC(Virtual Private Cloud) 분리 + Private Link, 완전 분리는 별도 IDC + 점프 호스트 + DLP 가 필요할 때 많음.
+이상적으로는 세 망 사이에 직접 트래픽 금지. 클라우드에서는 VPC(Virtual Private Cloud) 분리 + Private Link, 완전 분리는 별도 IDC (Internet Data Center, 데이터센터) + 점프 호스트 + DLP 가 필요할 때 많음.
 
 원픽은 일반 IT 서비스 기준 — 강한 망분리 의무는 아니지만, 운영 DB 망 / 결제 망의 논리 분리는 적용.
 
@@ -507,7 +507,7 @@ flowchart LR
 > 책의 보안 챕터들이 자주 빠뜨리는, 그러나 ISMS-P 심사에서 거의 매번 점검되는 항목들.
 
 1. **위탁자 관리** — 위탁사 보안 점검 / 계약서 보안 조항 / 위탁 사실 공시 (1.4)
-2. **개인정보 처리시스템 접속기록 보존** — **1~2년** 의무 (개인정보보호법 시행령). 접속 ID / 일시 / IP / 처리한 정보주체 정보 / 수행 업무
+2. **개인정보 처리시스템 접속기록 보존** — 원칙 1년, 5만명 이상 정보주체 처리 / 고유식별정보 / 민감정보 처리 시 2년 (개인정보보호법 시행령). 접속 ID / 일시 / IP / 처리한 정보주체 정보 / 수행 업무
 3. **암호키 관리 절차** — 키 생성·배포·갱신·폐기·접근 통제 / 키 관리자와 데이터 처리자 분리
 4. **DR(재해복구) 모의훈련** — 연 1회 이상. 실 운영 절체까지 포함
 5. **외부자 보안** — 협력업체 / 프리랜서 / 인턴의 출입·접근·반출 통제 / 비밀유지서약
@@ -572,7 +572,7 @@ flowchart LR
 - 「개인정보 보호법」 (제34조 사고 통지 / 제29조 안전조치 의무 / 시행령) — 국가법령정보센터 (URL 확인 필요)
 - 「정보통신망법」 (제50조 광고성 정보 / 제48조의3 침해사고 신고) — 국가법령정보센터 (URL 확인 필요)
 - 「전자금융거래법 / 전자금융감독규정」 (PG 위탁 / 책임) — 국가법령정보센터 (URL 확인 필요)
-- 「정보보호 가이드라인」 — KISA(한국인터넷진흥원) (URL 확인 필요, 수시 갱신)
+- 정보보호 가이드라인 (공식 가이드) — KISA(한국인터넷진흥원, Korea Internet & Security Agency) (URL 확인 필요, 수시 갱신)
 - 「개인정보 보호법 안내서」 — 개인정보보호위원회 (발행 연도 확인 필요)
-- OWASP Top 10 / ASVS / API Security Top 10 / Password Storage Cheat Sheet — OWASP Foundation (URL 확인 필요)
-- NIST SP 800-63B (Digital Identity Guidelines) — National Institute of Standards and Technology (URL 확인 필요)
+- OWASP Top 10 / ASVS / API Security Top 10 / Password Storage Cheat Sheet — OWASP Foundation (수시 갱신, URL 확인 필요)
+- NIST SP 800-63B (Digital Identity Guidelines) — National Institute of Standards and Technology (2017 발행 / 갱신 진행 중, URL 확인 필요)

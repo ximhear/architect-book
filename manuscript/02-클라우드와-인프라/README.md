@@ -217,7 +217,7 @@ graph LR
 
 | 영역 | 오픈소스 조합 | 매니지드 | 원픽 선택 ([케이스 11.1](../case-study/README.md#111-인프라--클라우드-2장)) |
 |------|------------|---------|----------|
-| Metrics + Logs + Traces (통합) | Prometheus + Loki + Tempo (self-host) | **Grafana Cloud (통합 매니지드)**, Datadog | **Grafana Cloud — 메트릭·로그·트레이스 통합** (self-host 부담 회피, SRE 8명 기준) |
+| Metrics + Logs + Traces (통합) | Prometheus + Loki + Tempo (self-host) | **Grafana Cloud (통합 매니지드)**, Datadog | **Grafana Cloud — 메트릭·로그·트레이스 통합 매니지드** (self-host 부담 회피, SRE 8명 기준) |
 | 표준 | OpenTelemetry (OTel) | (대부분 OTel 호환) | OTel SDK 강제 |
 
 ### 5.3 SLO 부터 시작하기

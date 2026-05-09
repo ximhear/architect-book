@@ -292,7 +292,7 @@ sequenceDiagram
 | 분기 | 목표 | 관련 장 |
 |------|------|--------|
 | Q1 | 모놀리스 모듈 경계 강제, 결제 SLO 99.99% 안정화 | 1·3·6 |
-| Q2 | 결제 서비스 분리 (NCP 100% 이중화 — RTO 5분), 라이브 채팅 fanout (분배) 분리 | 2·3·4 |
+| Q2 | 결제 서비스 분리 (NCP 비동기 복제 — RPO 1분 / RTO 5분, 분기 1회 fail-over drill), 라이브 채팅 fanout (분배) 분리 | 2·3·4 |
 | Q3 | Feature Store 정식화, 추천 실시간 보정 | 5 |
 | Q4 | AI Gateway 도입, 리뷰 요약 · CS 챗봇 정식 출시 | 5·6 |
 
@@ -423,7 +423,7 @@ sequenceDiagram
 > 이 책을 마무리한 독자에게 권하는 다음 자리.
 
 - *Designing Data-Intensive Applications* — Martin Kleppmann (O'Reilly, 2017) — 데이터 시스템의 깊이
-- *Building Microservices*, 2nd ed. — Sam Newman (O'Reilly, 2021) — MSA 의 깊이
+- *Building Microservices*, 2판 — Sam Newman (O'Reilly, 2021) — MSA 의 깊이
 - *Software Architecture: The Hard Parts* — Mark Richards, Neal Ford (O'Reilly, 2021) — 트레이드오프 사고
 - *Team Topologies* — Matthew Skelton, Manuel Pais (IT Revolution Press, 2019) — 팀 구조 · 콘웨이 법칙
 - *Accelerate* — Nicole Forsgren, Jez Humble, Gene Kim (IT Revolution Press, 2018) — DORA 지표

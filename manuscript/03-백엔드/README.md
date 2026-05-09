@@ -241,7 +241,7 @@ INSERT INTO outbox(
 COMMIT;
 ```
 
-→ outbox poller 또는 **Debezium-CDC 기반 outbox** 가 발행 (poller 부담 vs CDC 운영 부담 트레이드오프).
+→ outbox poller 또는 **Debezium-CDC(Change Data Capture, 변경 데이터 캡처) 기반 outbox** 가 발행 (poller 부담 vs CDC 운영 부담 트레이드오프).
 발행 후 삭제 또는 `published_at` 표시.
 
 #### 보상의 보상 — Saga 가 깨질 때
@@ -487,18 +487,18 @@ sequenceDiagram
 | outbox 발행 실패 | poller 재시도 (DB 에 남아있음) |
 | 컨슈머 처리 실패 | DLQ 로 이동 + 알람 |
 
-## 8.6 백엔드 관측성 — Saga / Outbox / 결제의 운영 시야
+### 8.6 백엔드 관측성 — Saga / Outbox / 결제의 운영 시야
 
-분산 흐름은 운영 시 **trace · metric · log 3종 모두** 가 도메인 모델과 1:1 매핑되어야 한다. 그렇지 않으면 사고 시 MTTR 이 폭발한다.
+분산 흐름은 운영 시 **trace · metric · log 3종 모두** 가 도메인 모델과 1:1 매핑되어야 한다. 그렇지 않으면 사고 시 MTTR (Mean Time To Recovery, 평균 복구 시간) 이 폭발한다.
 
-### Trace — 분산 추적 (OpenTelemetry)
+#### Trace — 분산 추적 (OpenTelemetry)
 
 - 모든 외부 진입에서 `trace_id` 생성 (BFF / webhook / Kafka 컨슈머)
 - Saga 단계별 span (`OrderCreated.reserveInventory`, `OrderCreated.charge`, `OrderCreated.persistOrderPaid`)
 - Outbox 발행 / 컨슈머 처리에 `trace_id` 전파 (헤더 또는 payload 메타)
 - Pay → PG → Pay webhook 까지 한 trace 로 묶이도록 PG 호출에 `idempotency_key` + `trace_id` 헤더
 
-### Metric — Saga / Outbox 핵심 지표
+#### Metric — Saga / Outbox 핵심 지표
 
 | 메트릭 | 의미 | 알람 임계 |
 |--------|------|----------|
@@ -509,13 +509,13 @@ sequenceDiagram
 | `dlq_size` | DLQ 적체 | > 0 즉시 (자동 ticket) |
 | `reconciler_mismatch_total` | 일 단위 정합 검증 불일치 | > 0 즉시 |
 
-### Log — 도메인 키 grep 가능
+#### Log — 도메인 키 grep 가능
 
 - 모든 로그에 `order_id` / `payment_id` / `seller_id` 컬럼 강제
 - 일 단위 reconciler 결과는 별도 테이블 + Slack 채널
 - PII 절대 로그에 출력 금지 (감사용은 별도 [6장 2.4](../06-보안과-컴플라이언스/))
 
-### 함정
+#### 함정
 
 > - **Saga span 누락** → "결제는 됐는데 주문이 안 됐다" 류 장애에서 어느 단계에서 끊겼는지 추적 불가
 > - **outbox_lag 미측정** → poller 죽음을 30분 후 알아챔
