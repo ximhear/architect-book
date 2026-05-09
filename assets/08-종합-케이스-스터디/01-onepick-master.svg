@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 760" width="1100" height="760" font-family="'Pretendard', 'Noto Sans KR', sans-serif">
+  <!--
+    원픽 마스터 다이어그램 — 책 표지 / 8장 1절 보강.
+    중앙 원픽 + 8개 영역 (1~7장 + 종합) + 외부 의존 + 핵심 숫자.
+  -->
+
+  <defs>
+    <style>
+      .center { fill: #fff5d6; stroke: #d4a017; stroke-width: 3; }
+      .center-text { font-size: 32px; font-weight: 700; text-anchor: middle; fill: #6a4f00; }
+      .center-sub { font-size: 14px; text-anchor: middle; fill: #6a4f00; }
+      .region { stroke-width: 2; fill-opacity: 0.18; }
+      .region-label { font-size: 16px; font-weight: 700; text-anchor: middle; }
+      .region-num { font-size: 12px; font-weight: 700; fill: #fff; text-anchor: middle; }
+      .item { fill: #fff; stroke: #555; stroke-width: 1; font-size: 11px; }
+      .item-text { font-size: 11px; text-anchor: middle; }
+      .actor { fill: #ffe8c2; stroke: #d4a017; stroke-width: 1.5; }
+      .actor-text { font-size: 12px; text-anchor: middle; font-weight: 600; }
+      .title { font-size: 26px; font-weight: 700; text-anchor: middle; }
+      .stat { font-size: 14px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <text x="550" y="36" class="title">원픽 (OnePick) — 한 장으로 보는 전체</text>
+  <text x="550" y="58" font-size="13" text-anchor="middle" fill="#555">
+    월 1,000만 MAU · GMV 1.2조 · 220명 엔지니어 · 한국 시장 한정 종합 커머스
+  </text>
+
+  <!-- 중앙 원픽 -->
+  <circle cx="550" cy="380" r="100" class="center"/>
+  <text x="550" y="370" class="center-text">원픽</text>
+  <text x="550" y="395" class="center-sub">OnePick</text>
+  <text x="550" y="415" class="center-sub">8개 영역 통합</text>
+
+  <!-- 영역 8개 (시계 12시부터 시계 방향) -->
+  <!-- 1장 아키텍처 (12시) -->
+  <g>
+    <rect x="450" y="160" width="200" height="80" rx="10" class="region" fill="#4a90e2" stroke="#4a90e2"/>
+    <circle cx="465" cy="175" r="11" fill="#1a4a82"/>
+    <text x="465" y="180" class="region-num">1</text>
+    <text x="550" y="200" class="region-label" fill="#1a4a82">아키텍처 기초</text>
+    <text x="550" y="220" class="item-text">모듈러 모놀리스 + 부분 추출</text>
+  </g>
+
+  <!-- 2장 클라우드 (1.5시) -->
+  <g>
+    <rect x="700" y="220" width="200" height="80" rx="10" class="region" fill="#4ae274" stroke="#3a9a5a"/>
+    <circle cx="715" cy="235" r="11" fill="#1a5a2a"/>
+    <text x="715" y="240" class="region-num">2</text>
+    <text x="800" y="260" class="region-label" fill="#1a5a2a">클라우드 / 인프라</text>
+    <text x="800" y="280" class="item-text">AWS + NCP · EKS 약 80개</text>
+  </g>
+
+  <!-- 3장 백엔드 (3시) -->
+  <g>
+    <rect x="800" y="340" width="200" height="80" rx="10" class="region" fill="#9b4ae2" stroke="#5a2a82"/>
+    <circle cx="815" cy="355" r="11" fill="#3d1a5a"/>
+    <text x="815" y="360" class="region-num">3</text>
+    <text x="900" y="380" class="region-label" fill="#3d1a5a">백엔드</text>
+    <text x="900" y="400" class="item-text">Spring + Go · Saga + Outbox</text>
+  </g>
+
+  <!-- 4장 프론트 (4.5시) -->
+  <g>
+    <rect x="700" y="460" width="200" height="80" rx="10" class="region" fill="#e2c34a" stroke="#a08218"/>
+    <circle cx="715" cy="475" r="11" fill="#5a4f00"/>
+    <text x="715" y="480" class="region-num">4</text>
+    <text x="800" y="500" class="region-label" fill="#5a4f00">프론트엔드</text>
+    <text x="800" y="520" class="item-text">Native 2벌 + Next.js + 라이브</text>
+  </g>
+
+  <!-- 5장 데이터 (6시) -->
+  <g>
+    <rect x="450" y="520" width="200" height="80" rx="10" class="region" fill="#4ae2c3" stroke="#1a8278"/>
+    <circle cx="465" cy="535" r="11" fill="#0a4a45"/>
+    <text x="465" y="540" class="region-num">5</text>
+    <text x="550" y="560" class="region-label" fill="#0a4a45">데이터 / AI</text>
+    <text x="550" y="580" class="item-text">S3 + dbt + Flink · LLM Gateway</text>
+  </g>
+
+  <!-- 6장 보안 (7.5시) -->
+  <g>
+    <rect x="200" y="460" width="200" height="80" rx="10" class="region" fill="#e2574a" stroke="#82231a"/>
+    <circle cx="215" cy="475" r="11" fill="#5a1010"/>
+    <text x="215" y="480" class="region-num">6</text>
+    <text x="300" y="500" class="region-label" fill="#5a1010">보안 / 컴플라이언스</text>
+    <text x="300" y="520" class="item-text">ISMS-P · PG 3사 · PII 분리</text>
+  </g>
+
+  <!-- 7장 운영 (9시) -->
+  <g>
+    <rect x="100" y="340" width="200" height="80" rx="10" class="region" fill="#7a4ae2" stroke="#3a1a82"/>
+    <circle cx="115" cy="355" r="11" fill="#2a1055"/>
+    <text x="115" y="360" class="region-num">7</text>
+    <text x="200" y="380" class="region-label" fill="#2a1055">운영 / 조직</text>
+    <text x="200" y="400" class="item-text">SRE · 도메인팀 1차 온콜 · SLO</text>
+  </g>
+
+  <!-- 8장 종합 (10.5시) -->
+  <g>
+    <rect x="200" y="220" width="200" height="80" rx="10" class="region" fill="#e24aa3" stroke="#82235a"/>
+    <circle cx="215" cy="235" r="11" fill="#5a1037"/>
+    <text x="215" y="240" class="region-num">8</text>
+    <text x="300" y="260" class="region-label" fill="#5a1037">종합 케이스</text>
+    <text x="300" y="280" class="item-text">1~7장 결정 통합</text>
+  </g>
+
+  <!-- 외부 actor — 4 모서리 -->
+  <!-- 사용자 (좌상) -->
+  <g>
+    <rect x="40" y="100" width="120" height="50" rx="6" class="actor"/>
+    <text x="100" y="120" class="actor-text">사용자</text>
+    <text x="100" y="138" class="item-text">iOS / Android / 웹</text>
+  </g>
+
+  <!-- 셀러 (우상) -->
+  <g>
+    <rect x="940" y="100" width="120" height="50" rx="6" class="actor"/>
+    <text x="1000" y="120" class="actor-text">셀러</text>
+    <text x="1000" y="138" class="item-text">셀러 어드민 (8만 명)</text>
+  </g>
+
+  <!-- 외부 의존 (우하) -->
+  <g>
+    <rect x="940" y="610" width="120" height="105" rx="6" class="actor"/>
+    <text x="1000" y="630" class="actor-text">외부</text>
+    <text x="1000" y="650" class="item-text">PG 3사</text>
+    <text x="1000" y="665" class="item-text">간편로그인 4사</text>
+    <text x="1000" y="680" class="item-text">PASS · NICE · KCB</text>
+    <text x="1000" y="695" class="item-text">택배 3사</text>
+    <text x="1000" y="710" class="item-text">FCM / APNs / 알림톡</text>
+  </g>
+
+  <!-- 직원 (좌하) -->
+  <g>
+    <rect x="40" y="610" width="120" height="50" rx="6" class="actor"/>
+    <text x="100" y="630" class="actor-text">원픽 직원</text>
+    <text x="100" y="648" class="item-text">220명 엔지니어 외</text>
+  </g>
+
+  <!-- 핵심 숫자 (하단 콜아웃) -->
+  <g transform="translate(0 720)">
+    <text x="180" y="0" class="stat" fill="#1a4a82">MAU 1,000만</text>
+    <text x="350" y="0" class="stat" fill="#82231a">결제 SLO 99.99%</text>
+    <text x="540" y="0" class="stat" fill="#1a5a2a">GMV 1.2조</text>
+    <text x="700" y="0" class="stat" fill="#5a1010">ISMS 의무</text>
+    <text x="850" y="0" class="stat" fill="#3d1a5a">220 엔지니어</text>
+  </g>
+
+  <!-- 화살표 (사용자 → 원픽 외 단순화) -->
+  <line x1="160" y1="125" x2="450" y2="320" stroke="#999" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="940" y1="125" x2="650" y2="320" stroke="#999" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="650" y1="430" x2="940" y2="640" stroke="#999" stroke-width="1" stroke-dasharray="4 3"/>
+</svg>

@@ -31,16 +31,17 @@ code-samples/
 | 챕터 | 패턴 | 위치 | 언어 |
 |------|------|------|------|
 | 3장 4.2 | Outbox 패턴 (DB-이벤트 원자성) | [03-backend/outbox/](03-backend/outbox/) | Spring Boot + Go |
+| 3장 4.2 | Saga 보상 + 일 단위 reconciler ("보상의 보상") | [03-backend/saga/](03-backend/saga/) | Spring Boot + Go |
+| 3장 4.3 | Idempotency 키 처리 (TTL 도메인별 차등) | [03-backend/idempotency/](03-backend/idempotency/) | Spring Boot + Go |
+| 3장 8.5 / 6장 4.1 | PG 라우터 — 1차 → 2차 → 3차 자동 fallback + circuit breaker | [03-backend/pg-router/](03-backend/pg-router/) | Go |
+| 4장 4.3 | BFF GraphQL — DataLoader 로 N+1 방지 | [04-frontend/bff-graphql/](04-frontend/bff-graphql/) | TypeScript (Apollo Server) |
 
 ## 추가 예정
 
-- Saga + 보상 트랜잭션 (3장 4.2)
-- Idempotency 키 처리 (3장 4.3)
-- PG 라우터 (1차 실패 → 2차 fallback) (3장 8.4 / 6장 4.1)
-- BFF GraphQL (Spring + Apollo) (4장 4.3)
 - ISR + on-demand revalidate (Next.js) (4장 2.2)
 - dbt + Iceberg 변환 모델 (5장 2.3)
 - LLM 호출 + 캐시 + AI Gateway (5장 6.3)
+- Spring DGS Framework BFF (Kotlin GraphQL — Apollo TypeScript 의 Kotlin 대안)
 
 ## 실행 환경 가정
 

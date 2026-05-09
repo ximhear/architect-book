@@ -197,6 +197,26 @@ graph TB
 
 ### 4.2 한국어 검색의 함정 — 본 책의 차별화 영역
 
+```mermaid
+graph LR
+    Input["입력<br/>'삼성 갤럭시 S24'"] --> Morph[Nori 형태소 분석]
+    Morph --> Tokens["토큰<br/>['삼성','갤럭시','S24']"]
+    Tokens --> Syn[시노님 적용<br/>samsung·SAMSUNG 동등]
+    Syn --> Norm[정규화<br/>대소문자·공백·단위]
+    Norm --> Index[(OpenSearch 색인)]
+
+    Search["검색 입력<br/>'샴성 갤럭시'"] --> Jamo[자모 분해<br/>+ edit distance]
+    Jamo --> Correct["정정<br/>샴성 → 삼성"]
+    Correct --> Lookup[Index 조회]
+    Index --> Lookup
+    Lookup --> Result[검색 결과]
+
+    Morph -.함정.-> Trap1[Nori 사전 hot-reload 미지원<br/>→ 인덱스 재생성 + alias 스왑]
+    Jamo -.함정.-> Trap2[자모 false positive<br/>→ 임계 길이 2자모 이상]
+```
+
+
+
 #### 형태소 분석
 
 - 영문은 공백 split 으로 충분, 한국어는 형태소 분석기(은전한닢 / **Nori** / Khaiii) 필수

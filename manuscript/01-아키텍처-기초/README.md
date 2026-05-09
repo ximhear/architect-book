@@ -86,6 +86,38 @@ PM 은 NFR 을 잘 모른다. 끌어내야 한다. 다음 질문이 효과적이
 - "얼마나 빨리 트래픽이 늘 거라고 보세요? 1년 후, 3년 후."
 - "내년에 팀이 두 배 커지면 코드가 그 속도를 따라갈 수 있을까요?"
 
+### NFR 끼리의 충돌 — 거미줄
+
+```mermaid
+graph TB
+    P[성능<br/>Performance]
+    A[가용성<br/>Availability]
+    S[확장성<br/>Scalability]
+    Sec[보안<br/>Security]
+    O[운영성<br/>Operability]
+    M[유지보수성<br/>Maintainability]
+    C[비용<br/>Cost]
+
+    P -.충돌.-> C
+    A -.충돌 CAP.-> Sec
+    Sec -.충돌.-> O
+    M -.충돌.-> P
+    S -.충돌.-> M
+
+    P -.보완.-> O
+    Sec -.보완.-> M
+
+    style P fill:#fff5d6
+    style A fill:#fff5d6
+    style S fill:#fff5d6
+    style Sec fill:#fff5d6
+    style O fill:#fff5d6
+    style M fill:#fff5d6
+    style C fill:#fff5d6
+```
+
+> "NFR 거미줄" — 한 가닥을 당기면 다른 가닥이 함께 흔들린다. 한 NFR 만 극단으로 끌어올리는 결정은 거의 항상 다른 NFR 을 부순다.
+
 ### 트레이드오프 — NFR 끼리도 충돌한다
 
 | 충돌 | 결정 방향 |

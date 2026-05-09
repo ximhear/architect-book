@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" font-family="'Pretendard', 'Noto Sans KR', sans-serif">
+  <!--
+    한국 법규 지형도 — 6장 1.1 보강.
+    3대 영역 (이용자 보호 / 결제·금융 / 거래·표시) 위에 7개 법령이 겹치는 벤다이어그램.
+  -->
+
+  <defs>
+    <style>
+      .domain { fill-opacity: 0.18; stroke-width: 2; }
+      .law { fill: #fff; stroke: #333; stroke-width: 1.5; }
+      .law-text { font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .domain-label { font-size: 16px; font-weight: 700; text-anchor: middle; }
+      .title { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .caption { font-size: 11px; fill: #555; text-anchor: middle; }
+      .cert { fill: #fffbe6; stroke: #d4a017; stroke-width: 1.2; }
+      .cert-text { font-size: 12px; font-weight: 600; text-anchor: middle; fill: #6a4f00; }
+    </style>
+  </defs>
+
+  <!-- 제목 -->
+  <text x="450" y="36" class="title">한국 법규의 지형도 — 한 장으로 보는 7개 법령 + 5개 인증</text>
+  <text x="450" y="56" class="caption">(2026년 상반기 기준 — 개정 빈번, 실 적용 시 최신 조문 확인)</text>
+
+  <!-- 3대 영역 (큰 원) -->
+  <!-- 이용자 보호 (왼쪽) -->
+  <circle cx="320" cy="320" r="190" class="domain" fill="#4a90e2" stroke="#4a90e2"/>
+  <text x="180" y="170" class="domain-label" fill="#1a4a82">이용자 보호</text>
+
+  <!-- 결제·금융 (오른쪽) -->
+  <circle cx="600" cy="320" r="190" class="domain" fill="#e2574a" stroke="#e2574a"/>
+  <text x="740" y="170" class="domain-label" fill="#82231a">결제 · 금융</text>
+
+  <!-- 거래·표시 (아래) -->
+  <circle cx="460" cy="450" r="180" class="domain" fill="#4ae274" stroke="#3a9a5a"/>
+  <text x="460" y="585" class="domain-label" fill="#1a5a2a">거래 · 표시</text>
+
+  <!-- 7개 법령 박스 -->
+  <!-- 개인정보보호법 (이용자 보호 중심) -->
+  <rect x="195" y="270" width="130" height="38" rx="6" class="law"/>
+  <text x="260" y="287" class="law-text">개인정보보호법</text>
+  <text x="260" y="302" class="law-text" font-weight="400" font-size="10">제29 / 제34조 등</text>
+
+  <!-- 정보통신망법 (이용자 보호 + 거래·표시 교차) -->
+  <rect x="220" y="370" width="130" height="38" rx="6" class="law"/>
+  <text x="285" y="387" class="law-text">정보통신망법</text>
+  <text x="285" y="402" class="law-text" font-weight="400" font-size="10">제50조 등</text>
+
+  <!-- 위치정보법 (이용자 보호) -->
+  <rect x="120" y="320" width="120" height="32" rx="6" class="law"/>
+  <text x="180" y="340" class="law-text">위치정보법</text>
+
+  <!-- 전자상거래법 (거래·표시 중심) -->
+  <rect x="395" y="490" width="130" height="38" rx="6" class="law"/>
+  <text x="460" y="507" class="law-text">전자상거래법</text>
+  <text x="460" y="522" class="law-text" font-weight="400" font-size="10">5년 보존 등</text>
+
+  <!-- 표시광고법 (거래·표시) -->
+  <rect x="540" y="495" width="120" height="32" rx="6" class="law"/>
+  <text x="600" y="515" class="law-text">표시광고법</text>
+
+  <!-- 전자금융거래법 (결제·금융 중심) -->
+  <rect x="595" y="270" width="170" height="38" rx="6" class="law"/>
+  <text x="680" y="287" class="law-text">전자금융거래법</text>
+  <text x="680" y="302" class="law-text" font-weight="400" font-size="10">전금법 / 감독규정</text>
+
+  <!-- 신용정보법 (결제·금융) -->
+  <rect x="650" y="370" width="120" height="32" rx="6" class="law"/>
+  <text x="710" y="390" class="law-text">신용정보법</text>
+
+  <!-- 5개 인증 (위쪽 별 박스) -->
+  <g>
+    <rect x="50"  y="80" width="80" height="32" rx="16" class="cert"/>
+    <text x="90" y="100" class="cert-text">ISMS</text>
+
+    <rect x="140" y="80" width="80" height="32" rx="16" class="cert"/>
+    <text x="180" y="100" class="cert-text">ISMS-P</text>
+
+    <rect x="230" y="80" width="80" height="32" rx="16" class="cert"/>
+    <text x="270" y="100" class="cert-text">PCI-DSS</text>
+
+    <rect x="320" y="80" width="80" height="32" rx="16" class="cert"/>
+    <text x="360" y="100" class="cert-text">KCMVP</text>
+
+    <rect x="410" y="80" width="80" height="32" rx="16" class="cert"/>
+    <text x="450" y="100" class="cert-text">CC 인증</text>
+
+    <text x="270" y="135" class="caption">↑ 인증 (의무 또는 자율) — 매출·이용자 규모 / 산업 / 보안 솔루션 도입에 따라</text>
+  </g>
+
+  <!-- 위반 페널티 (우측 상단 콜아웃) -->
+  <g>
+    <rect x="720" y="65" width="160" height="65" rx="6" fill="#fff0f0" stroke="#e2574a" stroke-width="1.5"/>
+    <text x="800" y="85" font-size="12" font-weight="700" text-anchor="middle" fill="#82231a">위반 시 페널티</text>
+    <text x="800" y="103" font-size="11" text-anchor="middle">과징금 · 서비스 정지</text>
+    <text x="800" y="118" font-size="11" text-anchor="middle">형사 책임 (사고 통지 등)</text>
+  </g>
+</svg>

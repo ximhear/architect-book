@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 660" width="720" height="660" font-family="'Pretendard', 'Noto Sans KR', sans-serif">
+  <!--
+    헥사고날 아키텍처 메타포 — 3장 1.1 보강.
+    중앙 6각형 = 도메인. 6변 = port. 6변 바깥 = adapter.
+  -->
+
+  <defs>
+    <style>
+      .domain { fill: #fff5d6; stroke: #d4a017; stroke-width: 3; }
+      .domain-text { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .domain-sub { font-size: 12px; text-anchor: middle; fill: #6a4f00; }
+      .port { fill: #d6e8ff; stroke: #4a90e2; stroke-width: 2; }
+      .port-text { font-size: 11px; text-anchor: middle; font-weight: 600; }
+      .adapter { fill: #fff; stroke: #555; stroke-width: 1.5; }
+      .adapter-text { font-size: 12px; text-anchor: middle; }
+      .title { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .legend { font-size: 11px; fill: #555; }
+    </style>
+  </defs>
+
+  <text x="360" y="34" class="title">헥사고날 — 도메인은 6각형 성, 어댑터는 성벽</text>
+  <text x="360" y="54" class="legend" text-anchor="middle">외부(어댑터) 가 변해도 중앙(도메인) 은 흔들리지 않는다</text>
+
+  <!-- 6각형 도메인 — 중심 (360, 360), 반지름 100 -->
+  <polygon points="360,260 446.6,310 446.6,410 360,460 273.4,410 273.4,310"
+           class="domain"/>
+  <text x="360" y="355" class="domain-text">domain</text>
+  <text x="360" y="380" class="domain-sub">엔티티 · 값 객체 · 도메인 서비스</text>
+  <text x="360" y="397" class="domain-sub">(외부 의존 0)</text>
+
+  <!-- 6개 port — 6각형 변에 작은 박스 -->
+  <!-- top -->
+  <rect x="305" y="248" width="110" height="20" rx="3" class="port"/>
+  <text x="360" y="263" class="port-text">port (in) / 유스케이스</text>
+
+  <!-- top-right -->
+  <g transform="translate(420 290) rotate(60)">
+    <rect x="-55" y="-10" width="110" height="20" rx="3" class="port"/>
+    <text x="0" y="5" class="port-text">port (out) / Repository</text>
+  </g>
+
+  <!-- bottom-right -->
+  <g transform="translate(420 430) rotate(-60)">
+    <rect x="-55" y="-10" width="110" height="20" rx="3" class="port"/>
+    <text x="0" y="5" class="port-text">port (out) / 외부 API</text>
+  </g>
+
+  <!-- bottom -->
+  <rect x="305" y="452" width="110" height="20" rx="3" class="port"/>
+  <text x="360" y="467" class="port-text">port (in) / Event</text>
+
+  <!-- bottom-left -->
+  <g transform="translate(300 430) rotate(60)">
+    <rect x="-55" y="-10" width="110" height="20" rx="3" class="port"/>
+    <text x="0" y="5" class="port-text">port (out) / Cache</text>
+  </g>
+
+  <!-- top-left -->
+  <g transform="translate(300 290) rotate(-60)">
+    <rect x="-55" y="-10" width="110" height="20" rx="3" class="port"/>
+    <text x="0" y="5" class="port-text">port (in) / Job</text>
+  </g>
+
+  <!-- 6개 adapter — 6각형 바깥 -->
+  <!-- 위: HTTP -->
+  <rect x="280" y="170" width="160" height="50" rx="6" class="adapter"/>
+  <text x="360" y="192" class="adapter-text" font-weight="700">adapter/in/web</text>
+  <text x="360" y="210" class="adapter-text" font-size="11">HTTP 컨트롤러 (Spring MVC)</text>
+
+  <!-- 우상: JPA -->
+  <rect x="495" y="240" width="160" height="50" rx="6" class="adapter"/>
+  <text x="575" y="262" class="adapter-text" font-weight="700">adapter/out/persistence</text>
+  <text x="575" y="280" class="adapter-text" font-size="11">JPA / Aurora MySQL</text>
+
+  <!-- 우하: 외부 API -->
+  <rect x="495" y="430" width="160" height="50" rx="6" class="adapter"/>
+  <text x="575" y="452" class="adapter-text" font-weight="700">adapter/out/client</text>
+  <text x="575" y="470" class="adapter-text" font-size="11">PG / 본인인증 / 택배사</text>
+
+  <!-- 아래: 이벤트 컨슈머 -->
+  <rect x="280" y="500" width="160" height="50" rx="6" class="adapter"/>
+  <text x="360" y="522" class="adapter-text" font-weight="700">adapter/in/event</text>
+  <text x="360" y="540" class="adapter-text" font-size="11">Kafka 컨슈머</text>
+
+  <!-- 좌하: 캐시 -->
+  <rect x="65" y="430" width="160" height="50" rx="6" class="adapter"/>
+  <text x="145" y="452" class="adapter-text" font-weight="700">adapter/out/cache</text>
+  <text x="145" y="470" class="adapter-text" font-size="11">Redis</text>
+
+  <!-- 좌상: 배치 / Job -->
+  <rect x="65" y="240" width="160" height="50" rx="6" class="adapter"/>
+  <text x="145" y="262" class="adapter-text" font-weight="700">adapter/in/job</text>
+  <text x="145" y="280" class="adapter-text" font-size="11">Spring Batch / 스케줄</text>
+
+  <!-- 외부 변경 화살표 (적군이 어댑터에서 멈춤) -->
+  <line x1="40" y1="265" x2="60" y2="265" stroke="#e2574a" stroke-width="2" marker-end="url(#redarrow)"/>
+  <text x="50" y="240" font-size="11" fill="#82231a" text-anchor="middle">변경</text>
+
+  <line x1="680" y1="265" x2="660" y2="265" stroke="#e2574a" stroke-width="2" marker-end="url(#redarrow)"/>
+  <text x="670" y="240" font-size="11" fill="#82231a" text-anchor="middle">변경</text>
+
+  <defs>
+    <marker id="redarrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e2574a"/>
+    </marker>
+  </defs>
+
+  <!-- 범례 -->
+  <text x="360" y="600" class="legend" text-anchor="middle">
+    어댑터 변경 (DB 교체 / 외부 API 갱신) 이 도메인 코드를 건드리지 않음
+  </text>
+  <text x="360" y="620" class="legend" text-anchor="middle">
+    테스트는 port 를 mock 하면 도메인 단위 테스트 가능 (DB 없이)
+  </text>
+</svg>

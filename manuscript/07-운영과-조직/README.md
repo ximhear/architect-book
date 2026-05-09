@@ -121,7 +121,28 @@ flowchart LR
     Resolve --> Postmortem[회고]
 ```
 
-### 3.2 역할
+### 3.2 역할 — 사람의 흐름
+
+```mermaid
+sequenceDiagram
+    participant A as 알람
+    participant IC as IC<br/>(Incident Commander)
+    participant Ops as Operations Lead
+    participant Comm as Communications Lead
+    participant Scribe
+
+    A->>IC: 임계 충족
+    IC->>Ops: 진단·복구 지시
+    IC->>Comm: 외부·사내 소통 개시
+    IC->>Scribe: 타임라인 기록 시작
+    Ops-->>IC: 원인 후보
+    Ops-->>IC: 격리 완료
+    Ops-->>IC: 복구 완료
+    IC->>Comm: 복구 알림
+    Comm->>Comm: 통지 의무 시한 점검 (개보법 제34조 — 6장)
+    IC-->>Scribe: 회고 자료로 인계
+    Note over IC,Scribe: 5일 이내 비난 없는 회고
+```
 
 - **Incident Commander (IC, 인시던트 사령관)**: 의사결정 · 소통 책임. 직접 디버깅 X.
 - **Operations Lead**: 실제 디버깅 · 복구 작업
