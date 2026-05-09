@@ -1,0 +1,46 @@
+# 대한민국 서비스 아키텍트 입문서 — 라이선스
+
+본 저작물의 **산문 · 다이어그램 · ADR · 케이스 스터디 · 베타 리뷰 · 기타 모든 콘텐츠**
+(단, [`code-samples/`](code-samples/) 디렉토리는 별도 라이선스 적용)
+는 다음 라이선스로 배포됩니다.
+
+## Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+
+Copyright © 2026 gzonelee (https://github.com/ximhear/architect-book)
+
+- **한국어 요약 (이용 안내)**: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ko
+- **정식 라이선스 전문 (한국어)**: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.ko
+- **정식 라이선스 전문 (영문)**: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+### 다음을 자유롭게 할 수 있습니다
+
+- **공유 (Share)** — 어떤 매체나 형식으로든 복제, 배포할 수 있습니다.
+- **변경 (Adapt)** — 리믹스, 변형하거나 2차적 저작물을 만들 수 있습니다.
+
+### 다음 조건을 따르는 한
+
+- **BY (저작자표시)** — 적절한 출처와 라이선스 링크를 표시하고, 변경되었을 경우 그 사실을 표시해야 합니다.
+- **NC (비영리)** — 영리 목적으로 이용 금지 (출판·교육 상품·유료 강의 등 영리 활용 불가).
+- **SA (동일조건변경허락)** — 변형하거나 재배포할 때 동일한 라이선스를 적용해야 합니다.
+
+### 추가 안내
+
+- **인용 / 참고** — 책의 일부 장 / 절 / 표 / 다이어그램을 인용 시 출처 (`gzonelee, "대한민국 서비스 아키텍트 입문서", https://github.com/ximhear/architect-book`) 표기.
+- **번역** — CC BY-NC-SA 4.0 으로 동일하게 배포 시 가능. 번역 사실 + 원문 출처 표기.
+- **사내 교재 활용** — 영리 목적의 사내 교육 상품 / 유료 컨설팅 자료 활용은 원칙적으로 비영리 조건과 충돌. 상업 활용을 원하시면 별도 라이선스 협의.
+- **출판사 / 상업 라이선스** — 별도 문의 (이 ADR-0007 의 follow-up 참조).
+
+---
+
+## 코드 예제
+
+[`code-samples/`](code-samples/) 디렉토리의 코드는 **MIT 라이선스**로 별도 배포됩니다.
+자세한 내용은 [`code-samples/LICENSE`](code-samples/LICENSE) 참조.
+
+코드는 자유롭게 (영리 목적 포함) 활용 가능하며, 단지 저작권 표시만 유지하면 됩니다.
+
+---
+
+## 의사결정 근거
+
+라이선스 선택 근거는 [ADR-0007](adr/0007-라이선스-제안.md) 참조.
