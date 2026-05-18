@@ -6,7 +6,7 @@
 | 권 | 무대 | 케이스 | 위치 |
 |----|------|--------|------|
 | **1권** | 전국 종합 커머스 (월 1,000만 MAU, 220명) | 원픽 (OnePick) | [manuscript/](manuscript/) |
-| **2권** | 세종 스마트시티 시민 참여형 에너지 (25명, 공공 협력) | 동네에너지 (MaeulEnergy) | [manuscript-2-energy/](manuscript-2-energy/) |
+| **2권** | 세종 스마트시티 시민 참여형 에너지 (26명, 공공 협력) | 동네에너지 (MaeulEnergy) | [manuscript-2-energy/](manuscript-2-energy/) + [부록 도구 사전](manuscript-2-energy/appendix-tools/README.md) |
 
 두 책의 의사결정 차이가 곧 학습 가치 — "케이스가 바뀌면 어디서 결정이 갈라지는가".
 

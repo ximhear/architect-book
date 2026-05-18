@@ -1,13 +1,15 @@
 # 2장. 클라우드와 인프라 — 공공 협력 위에서
 
-> 1권은 AWS 메인 + NCP 보조였다. 2권은 그 반대다 — 왜?
+> 1권은 AWS 메인 + NCP 보조였다. 2권은 **NCP 단일** 이다 — 왜?
 
 ## 이 장에서 답하는 질문
 
 - 공공 사업에서 국내 클라우드 우선이 정말 필요한가?
-- 25명 조직에서 EKS / NKS vs Managed PaaS 의 결정 무게는 어떻게 다른가?
+- 26명 조직에서 EKS / NKS vs Managed PaaS 의 결정 무게는 어떻게 다른가?
 - 한전 / 세종시 데이터허브 같은 공공 폐쇄망 연계는 어떻게 다루는가?
 - IoT 게이트웨이는 클라우드 안에 두는가, 외부에 두는가?
+
+> 약어 풀이 — NKS (Naver Kubernetes Service), EKS (Amazon Elastic Kubernetes Service), CDSS (Cloud Data Streaming Service, Kafka 호환), SENS (Simple & Easy Notification Service), AMI (Advanced Metering Infrastructure), KPX (한국전력거래소), CSAP (Cloud Security Assurance Program), IaC (Infrastructure as Code), SLO (Service Level Objective), SLI (Service Level Indicator), OTel (OpenTelemetry).
 
 ## 들어가며
 
@@ -25,13 +27,15 @@
 | AI/ML 워크로드 핵심? | Yes | 부분적 (Prophet / XGBoost — 무거운 모델 아님) |
 | 글로벌 진출 1~2년? | 검토 | **No (세종 단일)** |
 | 망분리·격리망 요구? | 부분 | **공공 폐쇄망 연계 (한전 일부) — 부분 요구** |
-| 비용 협상력 우선? | Yes (멀티) | 부분 (보조 AWS) |
+| 비용 협상력 우선? | Yes (멀티) | **약함 (단일 — 락인 인지)** |
+
+> **출처** — 1권 답 칸은 [1권 2장 결정 매트릭스](../../manuscript/02-클라우드와-인프라/README.md)·[1권 케이스 11](../../manuscript/case-study/README.md) 인용. 2권 답 칸은 [케이스 5·8·11.1](../case-study/README.md#5-제약--컴플라이언스) 인용.
 
 ### 1.2 결정 — NCP 단일 클라우드
 
-- **NCP 단일** — 공공 사업 가점 + 시민 데이터 한국 리전 + 한국어 지원 + 세종시 데이터허브와의 협의 용이 + HyperCLOVA X (한국어 LLM) 자연 통합
-- **보조 클라우드 없음** — 25명 조직이 멀티클라우드 운영 부담 못 짊어짐. 명시적 결정.
-- **외부 SaaS 만 클라우드 외부** — Grafana Cloud (관측성), Sentry (에러 추적), GitHub Actions (CI). 이들은 클라우드 락인 외부 요소로 분리.
+- **NCP 단일** — 공공 사업 가점 + 시민 데이터 한국 리전 + CSAP 등급 보유 + 세종시 데이터허브와의 협의 용이 + HyperCLOVA X (한국어 LLM) 자연 통합
+- **보조 클라우드 없음** — 26명 조직이 멀티클라우드 운영 부담 못 짊어짐. 명시적 결정.
+- **외부 SaaS 만 클라우드 외부** — Sentry (에러 추적, PII 스크러빙 후), GitHub Actions (CI). **관측성은 NCP 내부 (Cloud Insight + Cloud Log Analytics)** 가 1차 — 데이터 주권 + 공공 위탁 감사 요건.
 
 > 락인 회피는 IaC (Terraform NCP Provider) + 표준 도구 (OpenTelemetry / Helm / Kafka 호환 CDSS / S3 호환 Object Storage) 로 부분 완화. 진짜 이전이 필요할 시점이 오면 그때 평가 — 지금은 사업 자체에 집중.
 
@@ -39,22 +43,22 @@
 
 | 측면 | NCP 단일 (선택) | NCP 메인 + AWS 보조 | AWS 메인 |
 |------|----------------|---------------------|----------|
-| 공공 사업 가점 | 강함 | 강함 | 약함 |
+| 공공 사업 가점 (CSAP) | 강함 | 강함 | 약함 |
 | 시민 데이터 주권 | 자동 (한국 리전) | 일부 분산 — 검토 부담 | 검토 부담 |
-| 운영 인력 (25명 조직) | 적합 | 부담 | 부담 |
+| 운영 인력 (26명 조직) | 적합 | 부담 | 부담 |
 | 매니지드 서비스 폭 | 보통 | 넓음 | 가장 넓음 |
 | 인력 채용 (한국) | 풍부 (네이버·라인 출신) | 가장 풍부 | 가장 풍부 |
 | AI / ML 도구 | HyperCLOVA X (한국어) | + SageMaker 등 | SageMaker 등 |
 | 공공 데이터허브 호환 | 협업 사례 많음 | 강함 | 적음 |
-| 락인 위험 | 높음 | 중간 | 높음 (AWS) |
-| 비용 협상력 | 약함 | 중간 | 약함 |
-| 결정 적합성 (25명 / 공공) | **현 시점 적합** | 과잉 | 부적합 |
+| 락인 위험 | 높음 (의식적) | 중간 | 높음 (AWS) |
+| 비용 협상력 | 약함 (수용) | 중간 | 약함 |
+| 결정 적합성 (26명 / 공공) | **현 시점 적합** | 과잉 | 부적합 |
 
-## 2. 컨테이너 — 25명 조직의 NKS
+## 2. 컨테이너 — 26명 조직의 NKS
 
 ### 2.1 1권의 단계론 다시
 
-| 단계 | 1권 (220명) 위치 | 2권 (25명) 위치 |
+| 단계 | 1권 (220명) 위치 | 2권 (26명) 위치 |
 |------|------------------|------------------|
 | 0. VM + Ansible | (지나옴) | (지나옴) |
 | 1. Docker | (지나옴) | (지나옴) |
@@ -115,13 +119,18 @@
 - **공공 폐쇄망 게이트웨이** — 한전 / 복지부 연계 일부는 폐쇄망. 클라우드 안에서 폐쇄망으로 나가는 별도 게이트웨이 노드 필요 (NCP / AWS 의 Direct Connect 또는 전용회선)
 - **세종 5-1 생활권 망** — 자체 인프라가 일부 있어 IoT 게이트웨이를 그 망에 두는 옵션 (혼합)
 
-## 5. 관측성 — Grafana Cloud 처음부터
+## 5. 관측성 — NCP Cloud Insight + Cloud Log Analytics
 
-1권은 self-host (Loki + Tempo) 운영 후 매니지드 전환했지만, 2권은 25명이라 **처음부터 매니지드**.
+1권은 self-host (Loki + Tempo) 운영 후 Grafana Cloud 로 전환했지만, **2권은 데이터 주권 / 공공 위탁 감사 요건으로 처음부터 NCP 내부 매니지드**.
 
-- 메트릭 + 로그 + 트레이스 통합: Grafana Cloud (단일 매니지드)
+- 메트릭: NCP **Cloud Insight** (NKS 노드·서비스·DB·CDSS 통합)
+- 로그: NCP **Cloud Log Analytics** (감사 로그는 별도 보존)
+- 트레이스: Cloud Insight Application Performance Monitor (APM) + OpenTelemetry 수집. UX 미흡 부분은 NKS 위 Grafana OSS 보조 (시각화만, 데이터 저장은 NCP 유지)
+- 에러: Sentry (외부 SaaS) — PII 스크러빙 + 공공 도메인 (복지·취약계층) 은 별도 채널
 - IoT 메트릭 별도 — `iot_ingest_rate` / `dr_response_lag` / `alarm_delivery_time`
 - SLO 우선 — IoT 손실률 / 알람 도달 시간
+
+> **Grafana Cloud 를 쓰지 않은 이유** — 2026년 상반기 시점 Grafana Cloud 한국 리전 부재 (확인 필요 — 사업 도입 전 최신 리전 카탈로그 확인) → 시민 메트릭·로그가 일본 / 싱가포르 리전에 저장되면 데이터 주권 위반. 1권은 커머스라 가능했지만, 2권은 공공 위탁이라 같은 선택을 못 한다. NCP 매니지드의 trace UX 미흡은 운영 시간 가산으로 수용 (대안: OSS Tempo 를 NKS 위 self-host, 데이터는 한국 리전 Object Storage 만).
 
 ### 5.1 SLO
 
@@ -130,22 +139,24 @@
 | IoT ingest | 99.99% | 손실률 < 0.1% / 처리 lag < 60s |
 | DR 응답 | 99.95% | p95 < 1s / 한전 보고 정확도 100% |
 | 시민 앱 | 99.9% | p95 < 500ms |
-| **취약계층 알람** | **99.99%** | **5분 이내 사회복지사 도달** |
+| **취약계층 알람** | **99.99%** | **5분 이내 사회복지사 도달 (3채널 OR 도달률)** |
 
 ## 6. CI/CD — 작은 조직의 단순화
 
-1권의 Canary / Image promotion 단계는 25명에서도 유효. 단:
+1권의 Canary / Image promotion 단계는 26명에서도 유효. 단:
 
 - 배포 게이트 — PR → main → 자동 staging → 사람 승인 → prod (2단계만)
 - Canary — IoT ingester 만 (장애 영향 큼) / 모놀리스는 blue-green
 - 보안 스캔 — 1권과 동일 (SAST / SCA / Secret scan)
 
-## 7. 비용 (FinOps) — 매출 대비 18~25%
+## 7. 비용 (FinOps) — 매출 대비 18~25% / 분기 1회 리뷰
 
 1권 (10~14%) 보다 높다. 이유:
 - 매출 규모 자체가 작음 (연 30~40억) → IT 절대치는 작지만 비율 크게 보임
 - IoT 데이터 처리 비용 (시계열 저장·다운샘플링)
-- 공공 sponsor 일부 충당 — 실 부담은 매출 12~15% 수준
+- 공공 sponsor 일부 충당 — 단 "실 부담 12~15%" 는 책에서 단정하지 않는다 ([케이스 11.5](../case-study/README.md#115-운영) 비용 리뷰는 분기 1회로 단일화). 충당 비율은 분기마다 변동.
+
+> 리뷰 주기는 **분기 1회** ([케이스 11.5](../case-study/README.md#115-운영) 일치). 1권은 월 1회였지만 26명에서는 월 1회 전원 참여가 부담 — 분기로 단순화 + 인프라팀이 매월 점검.
 
 ## 8. 케이스 — 동네에너지 인프라 구성 ([케이스 11.1](../case-study/README.md#111-인프라) 인용)
 
@@ -180,14 +191,17 @@ graph TB
         Welfare[복지부 행복e음]
     end
 
+    subgraph "NCP 내부 관측성"
+        CI[Cloud Insight<br/>메트릭·APM]
+        CLA[Cloud Log Analytics<br/>로그·감사]
+    end
+
     subgraph "외부 SaaS (단일 클라우드 외)"
-        GC[Grafana Cloud<br/>관측성]
-        Sentry[Sentry<br/>에러 추적]
+        Sentry[Sentry<br/>에러 추적 (PII 스크러빙)]
         GHA[GitHub Actions<br/>CI]
     end
 
-    App --> Web
-    Web --> Vercel
+    App --> NKS
     Web --> NKS
     Console --> NKS
     Kiosk --> NKS
@@ -207,20 +221,48 @@ graph TB
     Hub -.양방향.-> NKS
     Welfare -.취약계층.-> NKS
 
-    NKS -.OTel.-> GC
+    NKS -.OTel.-> CI
+    NKS -.로그.-> CLA
     NKS -.에러.-> Sentry
     PG -.DR 복제.-> NKS
     NKS -.시크릿.-> NCP_Sec[NCP Secret Manager]
 ```
 
+### 8.2 26명 조직 모자 분포 (Mermaid 2)
+
+```mermaid
+graph LR
+    subgraph "인프라 4명"
+        I1[클라우드/IaC]
+        I2[관측성/SRE]
+        I3[IoT ingest 운영]
+        I4[보안·CSAP/KCMVP 협업]
+    end
+    subgraph "백엔드 6명 — 1차 온콜"
+        B1[DR/P2P/매칭/복지/IoT/회원/정산<br/>7도메인 6명]
+    end
+    subgraph "데이터·AI 3명"
+        D1[시계열·DR 예측·취약계층]
+    end
+    subgraph "프론트 3명"
+        F1[iOS/AOS/Web/콘솔/Kiosk]
+    end
+
+    I1 -.IC 풀.-> B1
+    I2 -.IC 풀.-> B1
+    D1 -.모델·정합.-> B1
+    F1 -.접근성.-> B1
+```
+
 ## 정리 — 체크리스트
 
-- [ ] 클라우드 선택 근거에 "공공 사업 가점 / 데이터 주권" 항목이 있는가
+- [ ] 클라우드 선택 근거에 "공공 사업 가점 (CSAP) / 데이터 주권" 항목이 있는가
 - [ ] 공공 폐쇄망 연계 경로가 IaC 에 정의되어 있는가
 - [ ] 한전 / KPX / 세종시 / 복지부 API 호출 한도가 모니터링되는가
-- [ ] 관측성이 처음부터 매니지드 (Grafana Cloud) 인가
+- [ ] 관측성이 NCP 내부 (Cloud Insight + Cloud Log Analytics) 로 데이터 주권을 만족하는가
 - [ ] SLO 가 도메인별 (IoT / DR / 시민 앱 / 안전 알람) 로 따로 정의되는가
 - [ ] IoT 게이트웨이 위치 (클라우드 / 세종 5-1 생활권 망) 가 명시되었는가
+- [ ] 인프라 4명 / IC 풀 6명이 야간·주말 로테이션을 감당하는가 ([케이스 4](../case-study/README.md#4-팀-구조-작은-조직-1권과의-극명한-차이))
 
 ## 더 읽을거리
 
